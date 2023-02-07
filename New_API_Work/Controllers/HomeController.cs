@@ -13,8 +13,26 @@ namespace New_API_Work.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
+
         {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://the-cocktail-db.p.rapidapi.com/search.php?s={drinkType}"),
+                Headers =
+    {
+            { "X-RapidAPI-Key", "apikey" },
+            { "X-RapidAPI-Host", "the-cocktail-db.p.rapidapi.com" },
+    },
+            };
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(body);
+            }
             return View();
         }
 
